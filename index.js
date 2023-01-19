@@ -1,25 +1,34 @@
-const express = require('express')
-const http = require("http");
-const { connection } = require("./config/db");
-const app = express()
+const express = require("express");
+const dbConnect = require("./config/db");
+// const userRoute = require("./routes/User.routes");
+// const signUpRoute = require("./routes/Signup.routes");
 
-const userRouter = require("./routes/user.route")
-const bugRouter = require("./routes/bug.route")
-const authRouter = require("./middlewares/auth")
-require("dotenv").config();
 const cors = require("cors");
-const server = http.createServer(app);
+const userRoute = require("./routes/user.route");
+const signUpRoute = require("./routes/signup.route");
+const bugRoute = require("./routes/bug.route");
+// const bugRoute = require("./routes/bug.route");
+
+const app = express();
+require('dotenv').config();
+const PORT = 8000;
 
 
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use("/auth", userRouter)
-app.use("/bug", authRouter, bugRouter)
+
+app.use("/login", userRoute);
+app.use("/signup", signUpRoute);
+app.use("/bug", bugRoute);
+
+
 app.get("/", (req, res) => {
     res.send("Welcome");
 });
 
-server.listen(8000, async () => {
-    await connection;
+
+app.listen(8000, async () => {
+    await dbConnect;
     console.log(`Server started on 8000`);
 });
